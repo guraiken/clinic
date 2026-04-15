@@ -1,25 +1,62 @@
+import { useEffect, useState } from "react"
+import { useAuth } from "../../contexts/AuthContext"
+import { InputHandler } from "./InputHandler"
+import { toast } from "react-toastify"
+
+import { Link, useNavigate } from "react-router" 
+import axios, { Axios } from "axios"
 
 
 const LoginForm = () => {
-  return (
-    <>
-    <section className="w-full flex justify-center items-center">
-        <form className="flex flex-col justify-center items-center bg-white px-10 py-14 rounded-md shadow-md">
-            <h2 className="font-bold text-2xl mb-4">Login</h2>
-            <div className="flex flex-col gap-2 mb-2">
-                <label htmlFor="">Email:</label>
-                <input type="email" className="px-2 border-1"/>
-            </div>
+    
+    const {login, logout, user} = useAuth()
+    const navigate = useNavigate()
+    
+    const [email, setEmail] = useState()
+    const [password, setPassword] = useState()
 
-            <div className="flex flex-col gap-2 mb-4">
-                <label htmlFor="">Senha:</label>
-                <input type="password" className="px-2 border-1"/>
-            </div>
-            <button className="text-lg text-white py-2 w-full rounded-md bg-sky-700 cursor-pointer hover:bg-sky-600">Entrar</button>
-        </form>
-    </section>
-    </>
-  )
+    const handleLogin = async (e) => {
+        e.preventDefault()
+        try {
+            const response = await axios.get("http://localhost:3000/users", {
+                params: {email, password}
+            })    
+            console.log(response)
+            
+            if(response.data.length === 0){
+                toast.error("Usuário não encontrado. Verifique email e senha", {
+                    autoClose: 3000,
+                    pauseOnHover: false
+                });
+                return
+            }
+            
+
+            toast.success("Login realizado com sucesso!", {
+                autoClose: 2000
+            })
+        } catch (error) {
+            console.error("Erro ao verificar usuário:", error)
+        }
+    }
+
+    return (
+        <>
+            <section className="w-full flex justify-center items-center" onSubmit={handleLogin}>
+                <form className="flex flex-col justify-center items-center bg-white px-12 h-[400px] rounded-md shadow-md">
+                    <h2 className="font-bold text-2xl mb-4">Login</h2>
+                    <InputHandler label={"Email"} type={"email"} required id={"email"}  
+                    value={email} setValue={setEmail}
+                    />
+                    <InputHandler label={"Senha"} type={"password"} required id={"senha"}
+                    value={password} setValue={setPassword} min={8}
+                    />
+                    <button className="text-lg text-white mt-2 py-2 w-full rounded-md bg-cyan-700 cursor-pointer hover:bg-cyan-800 transition-colors" type="submit">Entrar</button>
+                    <p className="mt-3">Não possui login? <Link href="" className="text-cyan-500"> Cadastre-se! </Link></p>
+                </form>
+            </section>
+        </>
+    )
 }
 
 export default LoginForm
