@@ -4,7 +4,7 @@ export const InputHandler = ({ type, label, id, value, setValue, placeholder= nu
     
     return (
         <fieldset className="flex flex-col gap-2 mb-2">
-            <label htmlFor={id} className={`block text-sm font-medium mb-1 ${labelClass}`}>{label}</label>
+            <label htmlFor={id} className={labelClass ? `${labelClass}` : "block text-sm font-medium mb-1"}>{label}</label>
             <input type={type} className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
