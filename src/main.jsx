@@ -11,12 +11,23 @@ import {ToastContainer} from "react-toastify"
 import "react-toastify/ReactToastify.css"
 import Dashboard from './pages/Dashboard'
 import { AuthProvider } from './contexts/AuthContext'
+import PrivateRoute from './components/PrivateRoute'
+import DashboardLayout from './layouts/DashboardLayout'
 
 
 
 export const router = createBrowserRouter([
     {path:"/", element:<Login/>},
-    {path:"/dashboard", element:<Dashboard/>}
+    { 
+      element: (
+      <PrivateRoute>
+        <DashboardLayout/>
+      </PrivateRoute>
+      ),
+      children: [
+        {path: "/dashboard", element: <Dashboard/>}
+      ]
+    }
 ])
 
 createRoot(document.getElementById('root')).render(
