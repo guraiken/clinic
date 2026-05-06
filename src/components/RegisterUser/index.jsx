@@ -26,7 +26,7 @@ const RegisterUser = () => {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         
         if(!isPasswordValid()){
             setIsPasswordMatch(false)

@@ -9,7 +9,37 @@
       "id": "2",
       "email": "fred@gmail.com",
       "password": "teste123"
+    },
+    {
+      "email": "123@gmail.com",
+      "password": "teste123",
+      "id": "oZd4MXEg9vc"
+    },
+    {
+      "email": "testee123@gmail.com",
+      "password": "teste123",
+      "id": "Ex0h7iXtoTE"
+    },
+    {
+      "email": "testeeee@gmail.com",
+      "password": "teste123",
+      "id": "nLp8P289i24"
+    },
+    {
+      "email": "TESTE@TESTE",
+      "password": "teste123",
+      "id": "pwIyhPOnVqI"
+    },
+    {
+      "email": "teste@testeteetete",
+      "password": "teste123",
+      "id": "6H0lAEltb-k"
     }
   ],
-  "$schema": "./node_modules/json-server/schema.json"
+  "patients": [
+    {
+      "id": "1",
+      
+    }
+  ]
 }
