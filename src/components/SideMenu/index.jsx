@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import {
     MdDashboard,
     MdExitToApp,
@@ -51,28 +51,37 @@ export const SideMenu = () => {
             <nav className="flex-1 p-4 space-y-4 overflow-y-auto">
                 <ul className="space-y-3">
                     <li>
-                        <Link to="/dashboard" className="flex items-center gap-3 hover:text-cyan-30">
+                        <NavLink to="/dashboard" className={({isActive}) => 
+                            isActive ? "text-cyan-300 flex gap-2" : "flex items-center gap-3 hover:text-cyan-300"
+                        }>
                             <MdDashboard size={20}/>
                             {!isCollapsed && <span>Início</span>}
-                        </Link>
+                        </NavLink>
                     </li>
                     <li>
-                        <Link to="/pacientes" className="flex items-center gap-3 hover:text-cyan-30">
+                        <NavLink to="/patients" className={({isActive}) => 
+                            isActive ? "text-cyan-300 flex gap-2" : "flex items-center gap-3 hover:text-cyan-300"
+                        }>
                             <FaUserPlus size={20}/>
                             {!isCollapsed && <span>Paciente</span>}
-                        </Link>
+                        </NavLink>
                     </li>
                     <li>
-                        <Link to="/consultas" className="flex items-center gap-3 hover:text-cyan-30">
+                        <NavLink to="/consults" className={({isActive}) => 
+                            isActive ? "text-cyan-300 flex gap-2" : "flex items-center gap-3 hover:text-cyan-300"
+                        }
+                        >
                             <FaCalendarCheck size={20}/>
                             {!isCollapsed && <span>Consultas</span>}
-                        </Link>
+                        </NavLink>
                     </li>
                     <li>
-                        <Link to="/exames" className="flex items-center gap-3 hover:text-cyan-30">
+                        <NavLink to="/exams" className={({isActive}) => 
+                            isActive ? "text-cyan-300 flex gap-2" : "flex items-center gap-3 hover:text-cyan-300"
+                        }>
                             <FaListAlt size={20}/>
                             {!isCollapsed && <span>Exames</span>}
-                        </Link>
+                        </NavLink>
                     </li>
                 </ul>
             </nav>
