@@ -62,7 +62,59 @@
         "neighborhood": "Centro",
         "reference": "Muro Branco"
       }
+    },
+    {
+    "id": "2",
+    "fullName": "João Pedro Santos",
+    "birthdate": "1985-11-23",
+    "cpf": "98.765.432-1",
+    "maritalStatus": "Casado",
+    "phone": "9876-5432",
+    "email": "joao.santos@outlook.com",
+    "birthplace": "Rio de Janeiro",
+    "emergencyContact": "(48)99123-4455",
+    "allergies": "Penicilina",
+    "specialCare": "Nenhum",
+    "healthInsurance": "Bradesco Saúde",
+    "insuranceNumber": "88543",
+    "insuranceValidity": "30/11/2026",
+    "address": {
+      "cep": "88015-200",
+      "city": "Florianópolis",
+      "state": "SC",
+      "street": "Avenida Mauro Ramos",
+      "number": "1205",
+      "complement": "Apto 402",
+      "neighborhood": "Centro",
+      "reference": "Próximo ao Hippo Supermercados"
     }
+  },
+  {
+    "id": "3",
+    "fullName": "Ana Beatriz Oliveira",
+    "birthdate": "1998-07-04",
+    "cpf": "45.612.378-0",
+    "maritalStatus": "Divorciada",
+    "phone": "4321-8765",
+    "email": "ana.oliveira@uol.com.br",
+    "birthplace": "Porto Alegre",
+    "emergencyContact": "(48)98877-6655",
+    "allergies": "Frutos do mar, Corante amarelo",
+    "specialCare": "Restrição a lactose",
+    "healthInsurance": "Amil",
+    "insuranceNumber": "44329",
+    "insuranceValidity": "08/04/2028",
+    "address": {
+      "cep": "88036-000",
+      "city": "Florianópolis",
+      "state": "SC",
+      "street": "Rua Lauro Linhares",
+      "number": "450",
+      "complement": "Bloco B - Sala 12",
+      "neighborhood": "Trindade",
+      "reference": "Em frente ao shopping"
+    }
+  }
   ],
   "consults": [
     {
