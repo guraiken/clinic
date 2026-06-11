@@ -9,7 +9,6 @@ const RegisterUser = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const submitButton = useRef(null)
 
     //validações e o loading
     const [isSaving, setIsSaving] = useState(false)
@@ -58,9 +57,9 @@ const RegisterUser = () => {
     }
 
   return (
-    <div className="w-full max-w-md p-6 bg-white rounded-xl">
+    <div onSubmit={(e) => handleSubmit(e)} className="w-full max-w-md p-6 bg-white rounded-xl">
         <h2 className="text-2xl font-bold mb-6 text-center">Criar Usuário</h2>
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form>
             <fieldset>
             <InputHandler
                 labelClass="block text-sm font-medium mb-1"

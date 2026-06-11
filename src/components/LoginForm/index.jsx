@@ -65,9 +65,8 @@ const LoginForm = () => {
     <div>
       <section
         className="w-full flex justify-center items-center"
-        onSubmit={handleLogin}
       >
-        <form className="flex flex-col justify-center items-center bg-white px-12 h-[400px] rounded-md shadow-md">
+        <form className="flex flex-col justify-center items-center bg-white px-12 h-[400px] rounded-md shadow-md" onSubmit={handleLogin}>
           <h2 className="font-bold text-2xl mb-4">Login</h2>
           <InputHandler
             label={"Email"}
