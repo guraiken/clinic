@@ -34,6 +34,41 @@
       "email": "teste@testeteetete",
       "password": "teste123",
       "id": "6H0lAEltb-k"
+    },
+    {
+      "email": "teste@teste.com",
+      "password": "teste123",
+      "id": "ywxXHnZQRW8"
+    },
+    {
+      "email": "Testtetste@teste",
+      "password": "teste123",
+      "id": "IywDTguEoPc"
+    },
+    {
+      "email": "testsetestest@teste.com",
+      "password": "teste123",
+      "id": "pl5FzSvDrfc"
+    },
+    {
+      "email": "testestsetes@teste.com",
+      "password": "teste123",
+      "id": "7IDtjRZ3dik"
+    },
+    {
+      "email": "teste@teste.com",
+      "password": "teste123",
+      "id": "fFD4h6dfFSA"
+    },
+    {
+      "email": "testet@tstestse.com",
+      "password": "teste123",
+      "id": "a7NlCaWxK3Q"
+    },
+    {
+      "email": "teste@testestes.com",
+      "password": "teste123",
+      "id": "KxXdvIbk9ro"
     }
   ],
   "patients": [
@@ -64,57 +99,113 @@
       }
     },
     {
-    "id": "2",
-    "fullName": "João Pedro Santos",
-    "birthdate": "1985-11-23",
-    "cpf": "98.765.432-1",
-    "maritalStatus": "Casado",
-    "phone": "9876-5432",
-    "email": "joao.santos@outlook.com",
-    "birthplace": "Rio de Janeiro",
-    "emergencyContact": "(48)99123-4455",
-    "allergies": "Penicilina",
-    "specialCare": "Nenhum",
-    "healthInsurance": "Bradesco Saúde",
-    "insuranceNumber": "88543",
-    "insuranceValidity": "30/11/2026",
-    "address": {
-      "cep": "88015-200",
-      "city": "Florianópolis",
-      "state": "SC",
-      "street": "Avenida Mauro Ramos",
-      "number": "1205",
-      "complement": "Apto 402",
-      "neighborhood": "Centro",
-      "reference": "Próximo ao Hippo Supermercados"
+      "id": "2",
+      "fullName": "João Pedro Santos",
+      "birthdate": "1985-11-23",
+      "cpf": "98.765.432-1",
+      "maritalStatus": "Casado",
+      "phone": "9876-5432",
+      "email": "joao.santos@outlook.com",
+      "birthplace": "Rio de Janeiro",
+      "emergencyContact": "(48)99123-4455",
+      "allergies": "Penicilina",
+      "specialCare": "Nenhum",
+      "healthInsurance": "Bradesco Saúde",
+      "insuranceNumber": "88543",
+      "insuranceValidity": "30/11/2026",
+      "address": {
+        "cep": "88015-200",
+        "city": "Florianópolis",
+        "state": "SC",
+        "street": "Avenida Mauro Ramos",
+        "number": "1205",
+        "complement": "Apto 402",
+        "neighborhood": "Centro",
+        "reference": "Próximo ao Hippo Supermercados"
+      }
+    },
+    {
+      "id": "3",
+      "fullName": "Ana Beatriz Oliveira",
+      "birthdate": "1998-07-04",
+      "cpf": "45.612.378-0",
+      "maritalStatus": "Divorciada",
+      "phone": "4321-8765",
+      "email": "ana.oliveira@uol.com.br",
+      "birthplace": "Porto Alegre",
+      "emergencyContact": "(48)98877-6655",
+      "allergies": "Frutos do mar, Corante amarelo",
+      "specialCare": "Restrição a lactose",
+      "healthInsurance": "Amil",
+      "insuranceNumber": "44329",
+      "insuranceValidity": "08/04/2028",
+      "address": {
+        "cep": "88036-000",
+        "city": "Florianópolis",
+        "state": "SC",
+        "street": "Rua Lauro Linhares",
+        "number": "450",
+        "complement": "Bloco B - Sala 12",
+        "neighborhood": "Trindade",
+        "reference": "Em frente ao shopping"
+      }
+    },
+    {
+      "fullName": "Gustavoles",
+      "gender": "masculino",
+      "birthdate": "2026-06-09",
+      "cpf": "790.821.610-28",
+      "rg": "4241232131321312312321322313213213213123123122313213123213131231231321",
+      "maritalStatus": "solteiro(a)",
+      "phone": "(48) 44141-2313",
+      "email": "teste@teste.com",
+      "birthplace": "Brasileiro",
+      "emergencyContact": "(42) 13123-1412",
+      "allergies": "Sim",
+      "specialCare": "Sim",
+      "healthInsurance": "Sim",
+      "insuranceNumber": "(23) 01409-1242",
+      "insuranceValidity": "2026-06-30",
+      "address": {
+        "cep": "88058-338",
+        "city": "Florianópolis",
+        "state": "SC",
+        "street": "Servidão Rita Maria Garcia",
+        "number": "13222",
+        "complement": "",
+        "neighborhood": "Ingleses do Rio Vermelho",
+        "reference": "Casa do zé"
+      },
+      "id": "QL34WXE4Y8I"
+    },
+    {
+      "fullName": "idsajoisak",
+      "gender": "masculino",
+      "birthdate": "2026-06-02",
+      "cpf": "213.213.213-13",
+      "rg": "3123123123123213213131",
+      "maritalStatus": "solteiro(a)",
+      "phone": "(32) 13132-1321",
+      "email": "321313213123@teste.com",
+      "birthplace": "213123213123",
+      "emergencyContact": "(21) 32131-2321",
+      "allergies": "Sim",
+      "specialCare": "Sim",
+      "healthInsurance": "Sim",
+      "insuranceNumber": "(12) 43214-1412",
+      "insuranceValidity": "200005-09-10",
+      "address": {
+        "cep": "88058-332",
+        "city": "Florianópolis",
+        "state": "SC",
+        "street": "Rua Maria Luiza Garcia",
+        "number": "Casa",
+        "complement": "131231",
+        "neighborhood": "Ingleses do Rio Vermelho",
+        "reference": "9410"
+      },
+      "id": "5L_elHSsdYc"
     }
-  },
-  {
-    "id": "3",
-    "fullName": "Ana Beatriz Oliveira",
-    "birthdate": "1998-07-04",
-    "cpf": "45.612.378-0",
-    "maritalStatus": "Divorciada",
-    "phone": "4321-8765",
-    "email": "ana.oliveira@uol.com.br",
-    "birthplace": "Porto Alegre",
-    "emergencyContact": "(48)98877-6655",
-    "allergies": "Frutos do mar, Corante amarelo",
-    "specialCare": "Restrição a lactose",
-    "healthInsurance": "Amil",
-    "insuranceNumber": "44329",
-    "insuranceValidity": "08/04/2028",
-    "address": {
-      "cep": "88036-000",
-      "city": "Florianópolis",
-      "state": "SC",
-      "street": "Rua Lauro Linhares",
-      "number": "450",
-      "complement": "Bloco B - Sala 12",
-      "neighborhood": "Trindade",
-      "reference": "Em frente ao shopping"
-    }
-  }
   ],
   "consults": [
     {
@@ -139,5 +230,6 @@
       "results": "Lorem",
       "id": "1"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

@@ -59,11 +59,11 @@ export const SideMenu = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/patients" className={({isActive}) => 
+                        <NavLink to="/pacientes" className={({isActive}) => 
                             isActive ? "text-cyan-300 flex gap-2" : "flex items-center gap-3 hover:text-cyan-300"
                         }>
                             <FaUserPlus size={20}/>
-                            {!isCollapsed && <span>Paciente</span>}
+                            {!isCollapsed && <span>Registrar Paciente</span>}
                         </NavLink>
                     </li>
                     <li>
@@ -81,6 +81,14 @@ export const SideMenu = () => {
                         }>
                             <FaListAlt size={20}/>
                             {!isCollapsed && <span>Exames</span>}
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/prontuarios" className={({isActive}) => 
+                            isActive ? "text-cyan-300 flex gap-2" : "flex items-center gap-3 hover:text-cyan-300"
+                        }>
+                            <FaListAlt size={20}/>
+                            {!isCollapsed && <span>Prontuários</span>}
                         </NavLink>
                     </li>
                 </ul>

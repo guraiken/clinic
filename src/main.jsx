@@ -7,12 +7,13 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 
 //toastify
-import {ToastContainer} from "react-toastify"
-import "react-toastify/ReactToastify.css"
 import Dashboard from './pages/Dashboard'
 import { AuthProvider } from './contexts/AuthContext'
 import PrivateRoute from './components/PrivateRoute'
 import DashboardLayout from './layouts/DashboardLayout'
+import MedicalRecordList from './components/MedicalRecordList'
+import RegisterFormPatient from './pages/RegisterFormPatient'
+import { ToastContainer } from 'react-toastify'
 
 
 
@@ -25,7 +26,9 @@ export const router = createBrowserRouter([
       </PrivateRoute>
       ),
       children: [
-        {path: "/dashboard", element: <Dashboard/>}
+        {path: "/dashboard", element: <Dashboard/>},
+        { path: "/prontuarios", element: <MedicalRecordList/> },
+        { path: "/pacientes", element: <RegisterFormPatient /> },
       ]
     }
 ])
