@@ -14,6 +14,7 @@ import DashboardLayout from './layouts/DashboardLayout'
 import MedicalRecordList from './components/MedicalRecordList'
 import RegisterFormPatient from './pages/RegisterFormPatient'
 import { ToastContainer } from 'react-toastify'
+import ConsultationForm from './components/ConsultationForm'
 
 
 
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
         {path: "/dashboard", element: <Dashboard/>},
         { path: "/prontuarios", element: <MedicalRecordList/> },
         { path: "/pacientes", element: <RegisterFormPatient /> },
+        { path: "/consultas", element: <ConsultationForm /> },
       ]
     }
 ])

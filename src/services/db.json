@@ -242,6 +242,26 @@
       "medication": "Lorem Ipsum",
       "dosagePrecautions": "Lorem Ipsum",
       "id": "1"
+    },
+    {
+      "patientId": "2",
+      "reason": "Gripe",
+      "date": "2026-06-12",
+      "time": "23:50",
+      "description": "gripado",
+      "medication": "analgésico",
+      "dosagePrecautions": "fdadfa",
+      "id": "fMHJHEbuswE"
+    },
+    {
+      "patientId": "6f75s8MTF7g",
+      "reason": "Febre",
+      "date": "2026-06-11",
+      "time": "23:51",
+      "description": "fsfdafdasfd",
+      "medication": "fdasdfaf",
+      "dosagePrecautions": "dfadfa",
+      "id": "chjP4gj8fDQ"
     }
   ],
   "exams": [

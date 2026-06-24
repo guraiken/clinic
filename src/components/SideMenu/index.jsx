@@ -67,7 +67,7 @@ export const SideMenu = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/consults" className={({isActive}) => 
+                        <NavLink to="/consultas" className={({isActive}) => 
                             isActive ? "text-cyan-300 flex gap-2" : "flex items-center gap-3 hover:text-cyan-300"
                         }
                         >

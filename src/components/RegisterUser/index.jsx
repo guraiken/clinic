@@ -49,7 +49,7 @@ const RegisterUser = () => {
         } catch (error) {
             console.log("Erro ao criar usuário", error)
             toast.error("Erro ao criar o usuário!", {
-                autoClose:2000,
+                autoClose: 2000,
                 hideProgressBar: true
             })
             setIsSaving(false)
