@@ -38,8 +38,10 @@ const PatientDetails = () => {
         const fetchPatientDetails = async () => {
             try {
                 const patientRes = await axios.get(`http://localhost:3000/patients/${id}`)
-                const consultRes = await axios.get(`http://localhost:3000/consults/patientsId=${id}`)
-                const examRes = await axios.get(`http://localhost:3000/exams/patientsId=${id}`)
+                const consultRes = await axios.get(`http://localhost:3000/consults?patientId=${id}`)
+                const examRes = await axios.get(`http://localhost:3000/exams?patientId=${id}`)
+                console.log(patientRes.data, consultRes.data, examRes.data)
+                
                 
                 setPatient(patientRes.data)
                 setConsults(consultRes.data)
