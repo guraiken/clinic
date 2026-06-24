@@ -33,6 +33,23 @@ const PatientDetails = () => {
         documentUrl: "",
         results: "",
     })
+
+    useEffect(() => {
+        const fetchPatientDetails = async () => {
+            try {
+                const patientRes = await axios.get(`http://localhost:3000/patients/${id}`)
+                const consultRes = await axios.get(`http://localhost:3000/consults/patientsId=${id}`)
+                const examRes = await axios.get(`http://localhost:3000/exams/patientsId=${id}`)
+                
+                setPatient(patientRes.data)
+                setConsults(consultRes.data)
+                setExams(examRes.data)
+            } catch (error) {
+                console.error("Erro ao obter detalhes do paciente", error)
+            }
+        }
+        fetchPatientDetails()
+    }, [id])
     
   return (
     <div>
