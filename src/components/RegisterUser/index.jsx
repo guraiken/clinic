@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from "react"
 import { InputHandler } from "../LoginForm/InputHandler"
 import { toast } from "react-toastify"
 import axios from "axios"
+import apiClient from "../../api/api"
 
-const RegisterUser = () => {
+const RegisterUser = ({onClose}) => {
 
     //usestates dos campos
+    const [nome, setNome] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -19,6 +21,7 @@ const RegisterUser = () => {
     const isPasswordValid = () => password.length >= 8 && password === confirmPassword 
 
     const cleanForm = () => {
+        setNome("")
         setEmail("")
         setPassword("")
         setConfirmPassword("")
@@ -34,11 +37,13 @@ const RegisterUser = () => {
         }
 
         setIsSaving(true)
+        onClose()
 
         try {
-            await axios.post("http://localhost:3000/users", {
-                email, password
+            await apiClient.post("/cadastro", {
+                email, senha: password, nome
             })
+
             setIsSaving(false)
             cleanForm()
             toast.success("Usuário Registrado com Sucesso!", {
@@ -60,6 +65,18 @@ const RegisterUser = () => {
     <div onSubmit={(e) => handleSubmit(e)} className="w-full max-w-md p-6 bg-white rounded-xl">
         <h2 className="text-2xl font-bold mb-6 text-center">Criar Usuário</h2>
         <form>
+            <fieldset>
+            <InputHandler
+                labelClass="block text-sm font-medium mb-1"
+                label={"Nome:"}
+                type={"nome"}
+                id={"nome"}
+                value={nome}
+                setValue={setNome}
+                required
+                className={"w-full p-2 border rounded-lg focus:border-none focus:outline-none focus:ring-2 focus:ring-blue-500"}
+                />
+            </fieldset>
             <fieldset>
             <InputHandler
                 labelClass="block text-sm font-medium mb-1"

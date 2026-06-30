@@ -94,6 +94,11 @@
       "email": "teste@testests.com",
       "password": "teste123",
       "id": "RGmBLIPStXs"
+    },
+    {
+      "email": "teste@teste.com",
+      "password": "teste123",
+      "id": "2AFne0yu93M"
     }
   ],
   "patients": [

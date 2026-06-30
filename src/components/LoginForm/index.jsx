@@ -7,6 +7,8 @@ import { Modal } from "../Modal";
 import { Link, useNavigate } from "react-router";
 import axios from "axios";
 import RegisterUser from "../RegisterUser";
+import apiClient from "../../api/api";
+import { jwtDecode } from "jwt-decode";
 
 const LoginForm = () => {
   const { login, logout, user } = useAuth();
@@ -27,15 +29,13 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.get("http://localhost:3000/users", {
-        params: {
+      const response = await apiClient.get("/login", {
           email: email.trim(),
-          password: password.trim(),
-        },
+          senha: password.trim(),
       });
+      const tokenAcesso = localStorage.setItem("accessToken", response?.data?.accessToken)
+      const tokenRefresh = localStorage.setItem("refreshToken", response?.data?.refreshToken)
 
-      console.log("password", password);
-      console.log(typeof password);
       // console.log("params", params)
 
       if (response.data.length === 0) {
@@ -46,13 +46,16 @@ const LoginForm = () => {
         return;
       }
 
-      login(email);
+      const payload = jwtDecode(tokenAcesso)
+
+      login(payload.email);
 
       toast.success("Login realizado com sucesso!", {
         autoClose: 2000,
       });
 
       setTimeout(() => navigate("/dashboard", 2000));
+      
     } catch (error) {
       console.error("Erro ao verificar usuário", error);
       toast.error("Erro ao conectar com o servidor", {
@@ -111,7 +114,7 @@ const LoginForm = () => {
         </form>
       </section>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <RegisterUser />
+        <RegisterUser onClose={() => setIsModalOpen(false)}/>
       </Modal>
     </div>
   );

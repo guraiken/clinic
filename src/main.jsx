@@ -32,7 +32,7 @@ export const router = createBrowserRouter([
         { path: "/prontuarios", element: <MedicalRecordList/> },
         { path: "/pacientes", element: <RegisterFormPatient /> },
         { path: "/consultas", element: <ConsultationForm /> },
-        { path: "/paciente/:id", element: <PatientDetails /> },
+        { path: "/paciente/:id", element: <PatientDetails/> }
       ]
     }
 ])
