@@ -29,12 +29,12 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const response = await apiClient.get("/login", {
-          email: email.trim(),
-          senha: password.trim(),
+      const response = await apiClient.post("/login", {
+          email,
+          senha: password,
       });
-      const tokenAcesso = localStorage.setItem("accessToken", response?.data?.accessToken)
-      const tokenRefresh = localStorage.setItem("refreshToken", response?.data?.refreshToken)
+
+      console.log("response", response)
 
       // console.log("params", params)
 
@@ -46,7 +46,11 @@ const LoginForm = () => {
         return;
       }
 
-      const payload = jwtDecode(tokenAcesso)
+      localStorage.setItem("accessToken", response.data.accessToken)
+      localStorage.setItem("refreshToken", response.data.refreshToken)
+
+      console.log("Token", response.data.accessToken)
+      const payload = jwtDecode(response.data.accessToken)
 
       login(payload.email);
 
@@ -61,6 +65,7 @@ const LoginForm = () => {
       toast.error("Erro ao conectar com o servidor", {
         autoClose: 3000,
       });
+      console.log(error.response)
     }
   };
 
