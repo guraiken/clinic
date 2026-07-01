@@ -1,50 +1,99 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import apiClient from '../../api/api'
+
+const formatDateValue = (value) => {
+  if (!value) return '-'
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+
+  return date.toLocaleString('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  })
+}
+
+const toDateTimeLocalValue = (value) => {
+  if (!value) return ''
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+
+  const pad = (number) => String(number).padStart(2, '0')
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
+const toISOStringValue = (value) => {
+  if (!value) return ''
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+
+  return date.toISOString()
+}
+
+const normalizeList = (payload) => {
+  if (Array.isArray(payload)) return payload
+  if (Array.isArray(payload?.data)) return payload.data
+  if (Array.isArray(payload?.data?.exames)) return payload.data.exames
+  if (Array.isArray(payload?.data?.consultas)) return payload.data.consultas
+  if (Array.isArray(payload?.exames)) return payload.exames
+  if (Array.isArray(payload?.consultas)) return payload.consultas
+
+  return []
+}
 
 const PatientDetails = () => {
   const { id } = useParams()
-  const [patient, setPatient] = useState({})
+  const [patient, setPatient] = useState(null)
   const [consults, setConsults] = useState([])
   const [exams, setExams] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const [editingConsult, setEditingConsult] = useState(null)
   const [editConsultData, setEditConsultData] = useState({
-    reason: '',
-    date: '',
-    time: '',
-    description: '',
-    medication: '',
-    dosagePrecautions: '',
+    motivo: '',
+    data_consulta: '',
+    observacoes: '',
+    medico_responsavel_id: '',
   })
   const [isEditingConsult, setIsEditingConsult] = useState(false)
 
   const [editingExam, setEditingExam] = useState(null)
   const [editExamData, setEditExamData] = useState({
-    name: '',
-    date: '',
-    time: '',
-    type: '',
-    laboratory: '',
-    documentUrl: '',
-    results: '',
+    tipo_exame: '',
+    valor: '',
+    descricao: '',
+    resultado: '',
+    data_exame: '',
   })
   const [isEditingExam, setIsEditingExam] = useState(false)
 
   useEffect(() => {
     const fetchPatientDetails = async () => {
       try {
-        const patientRes = await axios.get(`http://localhost:3000/patients/${id}`)
-        const consultsRes = await axios.get(`http://localhost:3000/consults?patientId=${id}`)
-        const examsRes = await axios.get(`http://localhost:3000/exams?patientId=${id}`)
+        setLoading(true)
 
-        setPatient(patientRes.data)
-        setConsults(consultsRes.data)
-        setExams(examsRes.data)
+        const patientRes = await apiClient.get(`/pacientes/${id}`)
+        const consultsRes = await apiClient.get('/consultas')
+        const examsRes = await apiClient.get('/exames')
+
+        const patientData = patientRes.data?.data ?? patientRes.data
+        const consultsPayload = normalizeList(consultsRes.data)
+        const examsPayload = normalizeList(examsRes.data)
+
+        setPatient(patientData)
+        setConsults(consultsPayload.filter((consult) => Number(consult?.paciente_id) === Number(id)))
+        setExams(examsPayload.filter((exam) => Number(exam?.pacienteId) === Number(id)))
       } catch (error) {
         console.error('Erro ao obter os detalhes do paciente:', error)
+        toast.error('Não foi possível carregar os detalhes do paciente.')
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -54,12 +103,10 @@ const PatientDetails = () => {
   const handleEditConsult = (consult) => {
     setEditingConsult(consult)
     setEditConsultData({
-      reason: consult.reason,
-      date: consult.date,
-      time: consult.time,
-      description: consult.description,
-      medication: consult.medication,
-      dosagePrecautions: consult.dosagePrecautions,
+      motivo: consult.motivo || '',
+      data_consulta: toDateTimeLocalValue(consult.data_consulta),
+      observacoes: consult.observacoes || '',
+      medico_responsavel_id: consult.medico_responsavel_id ?? '',
     })
     setIsEditingConsult(true)
   }
@@ -72,25 +119,29 @@ const PatientDetails = () => {
       const updatedConsult = {
         ...editingConsult,
         ...editConsultData,
+        data_consulta: toISOStringValue(editConsultData.data_consulta),
+        paciente_id: Number(id),
+        medico_responsavel_id: Number(editConsultData.medico_responsavel_id || editingConsult.medico_responsavel_id || 0),
       }
 
-      await axios.put(`http://localhost:3000/consults/${editingConsult.id}`, updatedConsult)
+      await apiClient.put(`/consultas/${editingConsult.id}`, updatedConsult)
       setConsults((prev) =>
-        prev.map((c) => (c.id === editingConsult.id ? updatedConsult : c))
+        prev.map((consult) => (consult.id === editingConsult.id ? updatedConsult : consult))
       )
 
       toast.success('Consulta atualizada com sucesso!')
       setIsEditingConsult(false)
       setEditingConsult(null)
-    } catch {
-      toast.error('Erro ao atualizar a consulta!')
+    } catch (error) {
+      console.error('Erro ao atualizar a consulta:', error)
+      toast.error(error?.response?.data?.message || 'Erro ao atualizar a consulta!')
     }
   }
 
-  const handleDeleteConsult = async (id) => {
+  const handleDeleteConsult = async (consultId) => {
     try {
-      await axios.delete(`http://localhost:3000/consults/${id}`)
-      setConsults((prev) => prev.filter((c) => c.id !== id))
+      await apiClient.delete(`/consultas/${consultId}`)
+      setConsults((prev) => prev.filter((consult) => consult.id !== consultId))
       toast.success('Consulta excluída com sucesso!')
     } catch {
       toast.error('Erro ao excluir consulta!')
@@ -100,13 +151,11 @@ const PatientDetails = () => {
   const handleEditExam = (exam) => {
     setEditingExam(exam)
     setEditExamData({
-      name: exam.name,
-      date: exam.date,
-      time: exam.time,
-      type: exam.type,
-      laboratory: exam.laboratory,
-      documentUrl: exam.documentUrl,
-      results: exam.results,
+      tipo_exame: exam.tipo_exame || '',
+      valor: exam.valor ?? '',
+      descricao: exam.descricao || '',
+      resultado: exam.resultado || '',
+      data_exame: toDateTimeLocalValue(exam.data_exame),
     })
     setIsEditingExam(true)
   }
@@ -119,9 +168,12 @@ const PatientDetails = () => {
       const updatedExam = {
         ...editingExam,
         ...editExamData,
+        data_exame: toISOStringValue(editExamData.data_exame),
+        pacienteId: Number(id),
+        valor: Number(editExamData.valor || editingExam.valor || 0),
       }
 
-      await axios.put(`http://localhost:3000/exams/${editingExam.id}`, updatedExam)
+      await apiClient.put(`/exames/${editingExam.id}`, updatedExam)
       setExams((prev) =>
         prev.map((exam) => (exam.id === editingExam.id ? updatedExam : exam))
       )
@@ -129,184 +181,272 @@ const PatientDetails = () => {
       toast.success('Exame atualizado com sucesso!')
       setIsEditingExam(false)
       setEditingExam(null)
-    } catch {
-      toast.error('Erro ao atualizar o exame!')
+    } catch (error) {
+      console.error('Erro ao atualizar o exame:', error)
+      toast.error(error?.response?.data?.message || 'Erro ao atualizar o exame!')
     }
   }
 
-  const handleDeleteExam = async (id) => {
+  const handleDeleteExam = async (examId) => {
     try {
-      await axios.delete(`http://localhost:3000/exams/${id}`)
-      setExams((prev) => prev.filter((e) => e.id !== id))
+      await apiClient.delete(`/exames/${examId}`)
+      setExams((prev) => prev.filter((exam) => exam.id !== examId))
       toast.success('Exame excluído com sucesso!')
     } catch {
-      toast.error('Erro ao excluir o exame!')
+      toast.error('Erro ao excluir exame!')
     }
   }
 
-  if (!patient) return <p>Carregando...</p>
+  const handleExportPdf = () => {
+    if (!patient) return
+
+    const printWindow = window.open('', '_blank', 'width=900,height=700')
+    if (!printWindow) {
+      toast.error('Seu navegador bloqueou a abertura da janela de impressão.')
+      return
+    }
+
+    const consultsMarkup = consults.length
+      ? consults.map((consult) => `
+          <div class="card">
+            <p><strong>Motivo:</strong> ${consult.motivo || '-'}</p>
+            <p><strong>Data:</strong> ${formatDateValue(consult.data_consulta)}</p>
+            <p><strong>Observações:</strong> ${consult.observacoes || '-'}</p>
+            <p><strong>Médico responsável:</strong> ${consult.medico_responsavel_id || '-'}</p>
+          </div>
+        `).join('')
+      : '<p>Nenhuma consulta registrada.</p>'
+
+    const examsMarkup = exams.length
+      ? exams.map((exam) => `
+          <div class="card">
+            <p><strong>Tipo:</strong> ${exam.tipo_exame || '-'}</p>
+            <p><strong>Valor:</strong> ${exam.valor ?? '-'}</p>
+            <p><strong>Descrição:</strong> ${exam.descricao || '-'}</p>
+            <p><strong>Resultado:</strong> ${exam.resultado || '-'}</p>
+            <p><strong>Data:</strong> ${formatDateValue(exam.data_exame)}</p>
+          </div>
+        `).join('')
+      : '<p>Nenhum exame registrado.</p>'
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Prontuário - ${patient.nome || 'Paciente'}</title>
+          <style>
+            body { font-family: Arial, sans-serif; color: #111827; padding: 24px; }
+            h1, h2 { color: #0f172a; }
+            .section { margin-top: 24px; }
+            .card { border: 1px solid #d1d5db; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+            p { margin: 4px 0; }
+          </style>
+        </head>
+        <body>
+          <h1>Prontuário do paciente</h1>
+          <p><strong>Nome:</strong> ${patient.nome || '-'}</p>
+          <p><strong>CPF:</strong> ${patient.cpf || '-'}</p>
+          <p><strong>Telefone:</strong> ${patient.telefone || '-'}</p>
+          <p><strong>E-mail:</strong> ${patient.email || '-'}</p>
+          <p><strong>Data de nascimento:</strong> ${patient.data_nascimento ? formatDateValue(patient.data_nascimento) : '-'}</p>
+          <p><strong>Sexo:</strong> ${patient.sexo || '-'}</p>
+          <p><strong>Responsável:</strong> ${patient.responsavel || 'Não informado'}</p>
+
+          <div class="section">
+            <h2>Consultas</h2>
+            ${consultsMarkup}
+          </div>
+
+          <div class="section">
+            <h2>Exames</h2>
+            ${examsMarkup}
+          </div>
+        </body>
+      </html>
+    `)
+    printWindow.document.close()
+    printWindow.focus()
+    setTimeout(() => {
+      printWindow.print()
+      printWindow.close()
+    }, 250)
+  }
+
+  if (loading) return <p className="p-6 text-gray-600">Carregando...</p>
+  if (!patient) return <p className="p-6 text-gray-600">Paciente não encontrado.</p>
 
   return (
     <section className="p-6 max-w-5xl mx-auto">
       <div className="bg-white rounded-2xl shadow-md p-6 mb-8 border border-gray-100">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-2">{patient.fullName}</h2>
-        <p><span className="font-semibold">Convênio:</span> {patient.healthInsurance}</p>
-        <p><span className="font-semibold">Alergias:</span> {patient.allergies}</p>
+        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">{patient.nome}</h2>
+            <p><span className="font-semibold">CPF:</span> {patient.cpf || '-'}</p>
+            <p><span className="font-semibold">Telefone:</span> {patient.telefone || '-'}</p>
+            <p><span className="font-semibold">E-mail:</span> {patient.email || '-'}</p>
+            <p><span className="font-semibold">Data de nascimento:</span> {patient.data_nascimento ? formatDateValue(patient.data_nascimento) : '-'}</p>
+            <p><span className="font-semibold">Sexo:</span> {patient.sexo || '-'}</p>
+            <p><span className="font-semibold">Responsável:</span> {patient.responsavel || 'Não informado'}</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleExportPdf}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition cursor-pointer"
+          >
+            Exportar PDF do prontuário
+          </button>
+        </div>
       </div>
 
-      {/* Consultas */}
       <div className="bg-white rounded-2xl shadow-md p-6 mb-8 border border-gray-100">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Histórico de Consultas</h3>
 
         {isEditingConsult ? (
           <form onSubmit={handleUpdateConsult} className="space-y-4">
-            {Object.keys(editConsultData).map((key) => (
-              <div key={key}>
-                <label className="block text-sm font-medium text-gray-700 capitalize mb-1">
-                  {key === 'dosagePrecautions'
-                    ? 'Dosagem e Precauções'
-                    : key.charAt(0).toUpperCase() + key.slice(1)}
-                </label>
-                <input
-                  type={key.includes('date') ? 'date' : key.includes('time') ? 'time' : 'text'}
-                  value={editConsultData[key]}
-                  onChange={(e) =>
-                    setEditConsultData({ ...editConsultData, [key]: e.target.value })
-                  }
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                  required
-                />
-              </div>
-            ))}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Motivo</label>
+              <input
+                value={editConsultData.motivo}
+                onChange={(e) => setEditConsultData({ ...editConsultData, motivo: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Data da consulta</label>
+              <input
+                type="datetime-local"
+                value={editConsultData.data_consulta}
+                onChange={(e) => setEditConsultData({ ...editConsultData, data_consulta: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+              <textarea
+                value={editConsultData.observacoes}
+                onChange={(e) => setEditConsultData({ ...editConsultData, observacoes: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                rows="3"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Médico responsável</label>
+              <input
+                type="number"
+                value={editConsultData.medico_responsavel_id}
+                onChange={(e) => setEditConsultData({ ...editConsultData, medico_responsavel_id: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+              />
+            </div>
 
             <div className="flex gap-3 pt-2">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition"
-              >
-                Salvar
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsEditingConsult(false)}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition"
-              >
-                Cancelar
-              </button>
+              <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition cursor-pointer">Salvar</button>
+              <button type="button" onClick={() => setIsEditingConsult(false)} className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition cursor-pointer">Cancelar</button>
             </div>
           </form>
         ) : consults.length === 0 ? (
           <p className="text-gray-500">Nenhuma consulta encontrada.</p>
         ) : (
-          consults.map((c) => (
-            <div
-              key={c.id}
-              className="border rounded-xl p-4 mb-4 bg-gray-50 hover:bg-gray-100 transition"
-            >
-              <p><strong>Consulta:</strong> {c.reason}</p>
-              <p><strong>Data:</strong> {c.date} - {c.time}</p>
-              <p><strong>Descrição:</strong> {c.description}</p>
-              <p><strong>Medicação:</strong> {c.medication}</p>
-              <p><strong>Dosagem e Precauções:</strong> {c.dosagePrecautions}</p>
+          consults.map((consult) => (
+            <div key={consult.id} className="border rounded-xl p-4 mb-4 bg-gray-50 hover:bg-gray-100 transition">
+              <p><strong>Motivo:</strong> {consult.motivo}</p>
+              <p><strong>Data:</strong> {formatDateValue(consult.data_consulta)}</p>
+              <p><strong>Observações:</strong> {consult.observacoes}</p>
+              <p><strong>Médico responsável:</strong> {consult.medico_responsavel_id}</p>
               <div className="flex gap-3 mt-3">
-                <button
-                  onClick={() => handleEditConsult(c)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleDeleteConsult(c.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
-                >
-                  Deletar
-                </button>
+                <button onClick={() => handleEditConsult(consult)} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm cursor-pointer">Editar</button>
+                <button onClick={() => handleDeleteConsult(consult.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm cursor-pointer">Deletar</button>
               </div>
             </div>
           ))
         )}
       </div>
 
-      {/* Exames */}
       <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">Histórico de Exames</h3>
 
         {isEditingExam ? (
           <form onSubmit={handleUpdateExam} className="space-y-4">
-            {Object.keys(editExamData).map((key) => (
-              <div key={key}>
-                <label className="block text-sm font-medium text-gray-700 capitalize mb-1">
-                  {key === 'documentUrl'
-                    ? 'URL do Documento'
-                    : key.charAt(0).toUpperCase() + key.slice(1)}
-                </label>
-                {key === 'results' ? (
-                  <textarea
-                    value={editExamData[key]}
-                    onChange={(e) =>
-                      setEditExamData({ ...editExamData, [key]: e.target.value })
-                    }
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                    rows="3"
-                    required
-                  />
-                ) : (
-                  <input
-                    type={key.includes('date') ? 'date' : key.includes('time') ? 'time' : 'text'}
-                    value={editExamData[key]}
-                    onChange={(e) =>
-                      setEditExamData({ ...editExamData, [key]: e.target.value })
-                    }
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                    required={key !== 'documentUrl'}
-                  />
-                )}
-              </div>
-            ))}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de exame</label>
+              <input
+                value={editExamData.tipo_exame}
+                onChange={(e) => setEditExamData({ ...editExamData, tipo_exame: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+              <input
+                type="number"
+                step="0.01"
+                value={editExamData.valor}
+                onChange={(e) => setEditExamData({ ...editExamData, valor: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+              <textarea
+                value={editExamData.descricao}
+                onChange={(e) => setEditExamData({ ...editExamData, descricao: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                rows="3"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Resultado</label>
+              <textarea
+                value={editExamData.resultado}
+                onChange={(e) => setEditExamData({ ...editExamData, resultado: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                rows="3"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Data do exame</label>
+              <input
+                type="datetime-local"
+                value={editExamData.data_exame}
+                onChange={(e) => setEditExamData({ ...editExamData, data_exame: e.target.value })}
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+              />
+            </div>
 
             <div className="flex gap-3 pt-2">
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition"
-              >
-                Salvar
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsEditingExam(false)}
-                className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition"
-              >
-                Cancelar
-              </button>
+              <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">Salvar</button>
+              <button type="button" onClick={() => setIsEditingExam(false)} className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition">Cancelar</button>
             </div>
           </form>
         ) : exams.length === 0 ? (
           <p className="text-gray-500">Nenhum exame encontrado.</p>
         ) : (
           exams.map((exam) => (
-            <div
-              key={exam.id}
-              className="border rounded-xl p-4 mb-4 bg-gray-50 hover:bg-gray-100 transition"
-            >
-              <p><strong>Exame:</strong> {exam.name}</p>
-              <p><strong>Data:</strong> {exam.date} - {exam.time}</p>
-              <p><strong>Tipo:</strong> {exam.type}</p>
-              <p><strong>Laboratório:</strong> {exam.laboratory}</p>
-              <p><strong>Documento:</strong> {exam.documentUrl}</p>
-              <p><strong>Resultados:</strong> {exam.results}</p>
+            <div key={exam.id} className="border rounded-xl p-4 mb-4 bg-gray-50 hover:bg-gray-100 transition">
+              <p><strong>Tipo:</strong> {exam.tipo_exame}</p>
+              <p><strong>Valor:</strong> {exam.valor}</p>
+              <p><strong>Descrição:</strong> {exam.descricao}</p>
+              <p><strong>Resultado:</strong> {exam.resultado}</p>
+              <p><strong>Data:</strong> {formatDateValue(exam.data_exame)}</p>
               <div className="flex gap-3 mt-3">
-                <button
-                  onClick={() => handleEditExam(exam)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleDeleteExam(exam.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
-                >
-                  Deletar
-                </button>
+                <button onClick={() => handleEditExam(exam)} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm cursor-pointer">Editar</button>
+                <button onClick={() => handleDeleteExam(exam.id)} className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm cursor-pointer">Deletar</button>
               </div>
             </div>
           ))
