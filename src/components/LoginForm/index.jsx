@@ -46,11 +46,12 @@ const LoginForm = () => {
         return;
       }
 
+      const tokenAcesso = localStorage.getItem("accessToken")
       localStorage.setItem("accessToken", response.data.accessToken)
       localStorage.setItem("refreshToken", response.data.refreshToken)
 
-      console.log("Token", response.data.accessToken)
-      const payload = jwtDecode(response.data.accessToken)
+      console.log("Token", tokenAcesso)
+      const payload = jwtDecode(tokenAcesso)
 
       login(payload.email);
 
