@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useOutletContext, useParams } from 'react-router'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import apiClient from '../../api/api'
@@ -49,6 +49,7 @@ const normalizeList = (payload) => {
 
 const PatientDetails = () => {
   const { id } = useParams()
+  const { isDarkMode } = useOutletContext() || { isDarkMode: false }
   const [patient, setPatient] = useState(null)
   const [consults, setConsults] = useState([])
   const [exams, setExams] = useState([])
@@ -272,15 +273,15 @@ const PatientDetails = () => {
     }, 250)
   }
 
-  if (loading) return <p className="p-6 text-gray-600">Carregando...</p>
-  if (!patient) return <p className="p-6 text-gray-600">Paciente não encontrado.</p>
+  if (loading) return <p className={`p-6 ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>Carregando...</p>
+  if (!patient) return <p className={`p-6 ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>Paciente não encontrado.</p>
 
   return (
-    <section className="p-6 max-w-5xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-md p-6 mb-8 border border-gray-100">
+    <section className={`p-6 max-w-5xl mx-auto ${isDarkMode ? 'text-slate-100' : 'text-gray-900'}`}>
+      <div className={`rounded-2xl shadow-md p-6 mb-8 border ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'}`}>
         <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">{patient.nome}</h2>
+            <h2 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-slate-100' : 'text-gray-800'}`}>{patient.nome}</h2>
             <p><span className="font-semibold">CPF:</span> {patient.cpf || '-'}</p>
             <p><span className="font-semibold">Telefone:</span> {patient.telefone || '-'}</p>
             <p><span className="font-semibold">E-mail:</span> {patient.email || '-'}</p>
@@ -298,13 +299,13 @@ const PatientDetails = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-md p-6 mb-8 border border-gray-100">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Histórico de Consultas</h3>
+      <div className={`rounded-2xl shadow-md p-6 mb-8 border ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'}`}>
+        <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-slate-100' : 'text-gray-700'}`}>Histórico de Consultas</h3>
 
         {isEditingConsult ? (
           <form onSubmit={handleUpdateConsult} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Motivo</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Motivo</label>
               <input
                 value={editConsultData.motivo}
                 onChange={(e) => setEditConsultData({ ...editConsultData, motivo: e.target.value })}
@@ -314,7 +315,7 @@ const PatientDetails = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data da consulta</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Data da consulta</label>
               <input
                 type="datetime-local"
                 value={editConsultData.data_consulta}
@@ -325,7 +326,7 @@ const PatientDetails = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Observações</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Observações</label>
               <textarea
                 value={editConsultData.observacoes}
                 onChange={(e) => setEditConsultData({ ...editConsultData, observacoes: e.target.value })}
@@ -336,7 +337,7 @@ const PatientDetails = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Médico responsável</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Médico responsável</label>
               <input
                 type="number"
                 value={editConsultData.medico_responsavel_id}
@@ -352,10 +353,10 @@ const PatientDetails = () => {
             </div>
           </form>
         ) : consults.length === 0 ? (
-          <p className="text-gray-500">Nenhuma consulta encontrada.</p>
+          <p className={`text-gray-500 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>Nenhuma consulta encontrada.</p>
         ) : (
           consults.map((consult) => (
-            <div key={consult.id} className="border rounded-xl p-4 mb-4 bg-gray-50 hover:bg-gray-100 transition">
+            <div key={consult.id} className={`border rounded-xl p-4 mb-4 transition ${isDarkMode ? 'bg-slate-700 border-slate-600 hover:bg-slate-600' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>
               <p><strong>Motivo:</strong> {consult.motivo}</p>
               <p><strong>Data:</strong> {formatDateValue(consult.data_consulta)}</p>
               <p><strong>Observações:</strong> {consult.observacoes}</p>
@@ -369,13 +370,13 @@ const PatientDetails = () => {
         )}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Histórico de Exames</h3>
+      <div className={`rounded-2xl shadow-md p-6 border ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'}`}>
+        <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-slate-100' : 'text-gray-700'}`}>Histórico de Exames</h3>
 
         {isEditingExam ? (
           <form onSubmit={handleUpdateExam} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de exame</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Tipo de exame</label>
               <input
                 value={editExamData.tipo_exame}
                 onChange={(e) => setEditExamData({ ...editExamData, tipo_exame: e.target.value })}
@@ -385,7 +386,7 @@ const PatientDetails = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Valor</label>
               <input
                 type="number"
                 step="0.01"
@@ -397,7 +398,7 @@ const PatientDetails = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Descrição</label>
               <textarea
                 value={editExamData.descricao}
                 onChange={(e) => setEditExamData({ ...editExamData, descricao: e.target.value })}
@@ -408,7 +409,7 @@ const PatientDetails = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Resultado</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Resultado</label>
               <textarea
                 value={editExamData.resultado}
                 onChange={(e) => setEditExamData({ ...editExamData, resultado: e.target.value })}
@@ -419,7 +420,7 @@ const PatientDetails = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data do exame</label>
+              <label className={`block text-sm font-medium mb-1 ${isDarkMode ? 'text-slate-300' : 'text-gray-700'}`}>Data do exame</label>
               <input
                 type="datetime-local"
                 value={editExamData.data_exame}
@@ -435,10 +436,10 @@ const PatientDetails = () => {
             </div>
           </form>
         ) : exams.length === 0 ? (
-          <p className="text-gray-500">Nenhum exame encontrado.</p>
+          <p className={`text-gray-500 ${isDarkMode ? 'text-slate-400' : 'text-gray-500'}`}>Nenhum exame encontrado.</p>
         ) : (
           exams.map((exam) => (
-            <div key={exam.id} className="border rounded-xl p-4 mb-4 bg-gray-50 hover:bg-gray-100 transition">
+            <div key={exam.id} className={`border rounded-xl p-4 mb-4 transition ${isDarkMode ? 'bg-slate-700 border-slate-600 hover:bg-slate-600' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}>
               <p><strong>Tipo:</strong> {exam.tipo_exame}</p>
               <p><strong>Valor:</strong> {exam.valor}</p>
               <p><strong>Descrição:</strong> {exam.descricao}</p>
