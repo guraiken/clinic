@@ -10,25 +10,29 @@ export const PatientsList = () => {
     const [ages, setAges] = useState({}) 
 
     const calculateAge = (birthdate) => {
-        if (!birthdate) "-"
+        if (!birthdate) return "-"
         const today = new Date()
         const birthdateDate = new Date(birthdate)
         let age = today.getFullYear() - birthdateDate.getFullYear()
         const monthDiff = today.getMonth() - birthdateDate.getMonth()
 
-        if(monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdateDate.getDate())) age--
+        if (
+            monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdateDate.getDate())
+        ) {
+            age--
+        }
+
         return age
     }
+
 
     useEffect(()=>{
         const fetchPatients = (async ()=> {
             try {
                 const response = await apiClient.get("/pacientes")
-                if(!response) return
+                // backend retorna: { message, data: [...] }
+                const patientsData = response?.data?.data.pacientes || []
 
-                const patientsData = response.data
-
-                // calcula a idade de cada paciente e entrega para o estado
 
                 const calculatedAges = {}
                 patientsData.forEach((patient) => {
@@ -36,6 +40,7 @@ export const PatientsList = () => {
                 })
                 setAges(calculatedAges)
                 setPatients(patientsData)
+
 
             } catch (error) {
                 console.error()
@@ -49,12 +54,14 @@ export const PatientsList = () => {
         setSearchTerm(e.target.value)
     }
 
-    const filteredPatients = patients.filter((patient)=>
-    [patient.nome, patient.email, patient.telefone]
-        .join(" ")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+    const filteredPatients = patients.filter((patient) =>
+        [patient?.nome, patient?.email, patient?.telefone]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
     )
+
 
   return (
     <div className="bg-white shadow rounded 2xl p-6 mt-8">

@@ -21,9 +21,11 @@ export const AuthProvider = ({children}) => {
         setUser(null)
     }
 
+    const isAdmin = user && user.role === "admin" ? true : false
+
     return (
         <AuthContext.Provider
-            value={{user, logout, login}}
+            value={{user, logout, login, isAdmin}}
         >   
           {children}
         </AuthContext.Provider>
