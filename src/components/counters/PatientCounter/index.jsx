@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import {FaHospitalUser} from "react-icons/fa"
+import apiClient from "../../../api/api"
 
 export const PatientCounter = () => {
 
@@ -10,7 +11,7 @@ export const PatientCounter = () => {
     
         const fetchPatients = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/patients")
+                const response = await apiClient.get("/patients")
                 setPatientCounter(response.data.length)
             } catch (error) {
                 console.error("Erro ao obter dados dos pacientes", error)

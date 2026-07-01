@@ -10,7 +10,7 @@ export const ExamCounter = () => {
     
         const fetchPatients = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/exams")
+                const response = await apiClient.get("/exams")
                 setExamCounter(response.data.length)
             } catch (error) {
                 console.error("Erro ao obter dados dos exames", error)

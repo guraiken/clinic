@@ -63,10 +63,9 @@ const LoginForm = () => {
       
     } catch (error) {
       console.error("Erro ao verificar usuário", error);
-      toast.error("Erro ao conectar com o servidor", {
+      toast.error("Erro ao verificar usuário", {
         autoClose: 3000,
       });
-      console.log(error.response)
     }
   };
 

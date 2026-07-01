@@ -39,6 +39,7 @@ export const PatientsList = () => {
 
             } catch (error) {
                 console.error()
+                console.log(error.response)
             }
         })
         fetchPatients()
@@ -82,7 +83,7 @@ export const PatientsList = () => {
                 <ul className="divide-y divide-gray-200">
                     {filteredPatients.map((patient) => (
                         <li
-                            key={patient.id}
+                            key={patient?.id}
                             className="flex flex-col sm:flex-row sm:items-center justify-between py-4"
                         >
                             <div className="flex items-center gap-4">
@@ -90,17 +91,17 @@ export const PatientsList = () => {
                                     <FaUserAlt size={20}/>
                                 </div>
                                 <div>
-                                     <p className="font-semibold text-gray-800"> {patient.nome}</p>
-                                     <p className="text-sm text-gray-600">{patient.email}</p>
-                                     <p className="text-sm text-gray-600">{patient.telefone}</p>
+                                     <p className="font-semibold text-gray-800"> {patient?.nome}</p>
+                                     <p className="text-sm text-gray-600">{patient?.email}</p>
+                                     <p className="text-sm text-gray-600">{patient?.telefone}</p>
                                 </div>
                             </div>
 
                             <div className="text-sm text-gray-600 mt-2 sm:mt-0 text-right">
-                                <p><strong>Idade:</strong> {ages[patient.id] || '-'} anos</p>
-                                <p><strong>Plano:</strong> {patient?.healthInsurance || ""}</p>
+                                <p><strong>Idade:</strong> {ages[patient?.id] || '-'} anos</p>
+                                {/* <p><strong>Plano:</strong> {patient?.healthInsurance || ""}</p> */}
                                 <Link 
-                                    to={`/paciente/${patient.id}`}
+                                    to={`/paciente/${patient?.id}`}
                                     className="text-cyan-700 font-semibold hover:underline"
                                 >
                                     Ver detalhes

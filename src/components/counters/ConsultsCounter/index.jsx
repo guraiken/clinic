@@ -10,7 +10,7 @@ export const ConsultsCounter = () => {
     
         const fetchConsults = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/consults")
+                const response = await apiClient.get("/consults")
                 setConsultsCounter(response.data.length)
             } catch (error) {
                 console.error("Erro ao obter dados das consultas", error)
